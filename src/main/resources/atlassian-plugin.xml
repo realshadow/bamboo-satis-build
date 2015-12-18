@@ -1,0 +1,41 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/satisIcon.png</param>
+        <param name="plugin-logo">images/satisLogo.png</param>
+    </plugin-info>
+
+    <resource type="i18n" name="sk.hts.bamboo.plugins.satisbuild" location="satisbuild" />
+
+    <component name="Satis Build Admin Configuration Manager" key="artifactoryServerConfigManager"
+               class="sk.hts.bamboo.plugins.admin.SatisConfigManager"/>
+    <component-import key="pluginSettingsFactory"
+                      interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+
+    <xwork key="manageSatisConfigurationAdmin" name="Satis Build Plugin">
+        <package name="configureSatisBuildPlugin" extends="admin">
+            <action name="manageSatisConfiguration" class="sk.hts.bamboo.plugins.admin.ManageSatisConfigurationAction">
+                <result name="input" type="freemarker">/templates/admin/manageSatisConfiguration.ftl</result>
+                <result name="success" type="freemarker">/templates/admin/manageSatisConfiguration.ftl</result>
+            </action>
+        </package>
+    </xwork>
+
+    <web-item key="configureSatisBuildPlugin" name="Satis Build Plugin" section="system.admin/Plugins">
+        <label key="Satis Build Plugin"/>
+        <link linkId="configureSatisBuildPlugin">/admin/manageSatisConfiguration.action</link>
+    </web-item>
+
+    <!-- satisbuild task-type -->
+    <taskType key="task.builder.satisbuild" name="Satis Build" class="sk.hts.bamboo.plugins.SatisBuildTask">
+        <description>Trigger repository update in Satis</description>
+        <configuration class="sk.hts.bamboo.plugins.SatisBuildTaskConfigurator" />
+        <resource type="freemarker" name="edit" location="templates/SatisBuildEditTask.ftl" />
+        <resource type="freemarker" name="view" location="templates/SatisBuildViewTask.ftl" />
+        <resource type="download" name="icon" location="images/satisLogo.png" />
+        <category name="builder" />
+        <category name="deployment" />
+    </taskType>
+</atlassian-plugin>
